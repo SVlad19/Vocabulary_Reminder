@@ -13,6 +13,7 @@ class DataBase : public QObject
 public:
     DataBase();
     QSqlTableModel* GetModel()const;
+    QMap<QString,QString> GetData();
 private:
     QSqlDatabase database;
     std::unique_ptr<QSqlQuery> query;

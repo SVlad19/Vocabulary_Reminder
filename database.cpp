@@ -27,3 +27,31 @@ QSqlTableModel *DataBase::GetModel() const
 {
     return model.get();
 }
+
+QMap<QString, QString> DataBase::GetData()
+{
+    QMap<QString,QString> data;
+    size_t counter =0;
+
+    if(query->exec("SELECT Word, Translation FROM VocabularyReminder")){
+        qDebug()<<"Select ok!";
+
+        while(query->next()){
+            if(counter == 10){
+                   break;
+            }
+            QString word = query->value("Word").toString();
+            QString transcript = query->value("Translation").toString();
+            data[word] = transcript;
+            counter++;
+        }
+    }else{
+        qDebug()<<"Select didn`t work!";
+    }
+
+    for(QMap<QString,QString>::ConstIterator it = data.constBegin(); it != data.constEnd();++it){
+        qDebug()<<"Key = "<<it.key() << " Value = "<<it.value()<<"\n";
+    }
+    return data;
+
+}
