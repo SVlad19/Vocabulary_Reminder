@@ -6,6 +6,7 @@
 
 class DataBase;
 class QSqlTableModel;
+class TestForm;
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -26,7 +27,7 @@ private slots:
 
     void on_btnRemove_clicked();
 
-    void on_pushButton_clicked();
+    void on_btnTest_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -34,5 +35,6 @@ private:
     size_t index;
     QSqlTableModel* model;
     QMap<QString,QString> data;
+     std::unique_ptr<TestForm> testForm;
 };
 #endif // MAINWINDOW_H

@@ -51,9 +51,10 @@ void MainWindow::on_btnRemove_clicked()
 }
 
 
-void MainWindow::on_pushButton_clicked()
+void MainWindow::on_btnTest_clicked()
 {
-    std::unique_ptr<TestForm> testForm = std::make_unique<TestForm>(dataBase->GetData());
+    testForm = std::make_unique<TestForm>(dataBase->GetData());
 
+    testForm->show();
 }
 
