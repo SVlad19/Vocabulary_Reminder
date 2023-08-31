@@ -1,15 +1,28 @@
 #include "testform.h"
 #include "ui_testform.h"
+#include <QTimer>
 #include <random>
+#include <QMessageBox>
 
-TestForm::TestForm(QMap<QString, QString> data, QWidget *parent):
+TestForm::TestForm(const QHash<QString, QString>& data, QWidget *parent):
     QDialog(parent),
     ui(new Ui::TestForm),
-    data(data)
+    data(data),
+    amountOfElements(data.size()<13?data.size():13),
+    randomKey(amountOfElements),
+    score(0)
 {
     ui->setupUi(this);
 
-    this->data = data;
+    int counter = 0;
+
+    for(auto it = data.cbegin(); it != data.cend(); ++it){
+        if(counter < randomKey.capacity()){
+             randomKey[counter++] = it.key();
+        }else{
+            break;
+        }
+    }
 
     StartTest();
 }
@@ -21,86 +34,95 @@ TestForm::~TestForm()
 
 bool TestForm::isAnswerCorrect(const QString &answer) const
 {
-    if(correctAnswer.value() == answer){
+    if(correctAnswer.second == answer){
+        score++;
         return true;
     }else{
+        score--;
         return false;
     }
 }
 
 void TestForm::StartTest()
 {
+    if(randomKey.size() > 3){
 
-   QMap<QString,QString> temp;
-   static size_t numberOfTest = 0;
-   size_t countOfElements = 0;
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> distributionForCorrectAnswer(0, randomKey.size()-1);
+    std::uniform_int_distribution<> distributionForButton(0, 2);
 
-   for(auto it = data.constBegin(); it != data.constEnd();++it){
-       if(countOfElements <= 3){
-           temp[it.key()]=it.value();
-           countOfElements++;
-       }
-   }
-    correctAnswer = std::next(data.begin(),numberOfTest);
-    numberOfTest++;
+    int correctIndex = distributionForCorrectAnswer(gen);
+    int correctButton = distributionForButton(gen);
 
-   ui->lWord->setText(correctAnswer.key());
+    correctAnswer = qMakePair(randomKey[correctIndex],data[randomKey[correctIndex]]);
 
-   std::random_device rd;
-   std::mt19937 gen(rd());
-   std::uniform_int_distribution<> distribution(1, 3);
-   int randNumber = distribution(gen);
-   size_t tempCount = 1;
+    QVector<QPushButton*> buttons = findChildren<QPushButton*>();
 
-   switch(randNumber){
-   case 1:
-       ui->btnAnswer1->setText(correctAnswer.value());
+    buttons[correctButton]->setText(correctAnswer.second);
+    ui->lWord->setText(correctAnswer.first);
 
-       for(auto it = data.constBegin(); it != data.constEnd();++it){
-           if(tempCount == 1 && it != correctAnswer){
-               ui->btnAnswer2->setText(it.value());
-               tempCount++;
-           }else if(tempCount == 2 && it != correctAnswer){
-               ui->btnAnswer3->setText(it.value());
-           }
-       }
-       break;
-   case 2:
-       ui->btnAnswer2->setText(correctAnswer.value());
+    randomKey.removeOne(randomKey[correctIndex]);
 
-       for(auto it = data.constBegin(); it != data.constEnd();++it){
-           if(tempCount == 1 && it != correctAnswer){
-               ui->btnAnswer1->setText(it.value());
-               tempCount++;
-           }else if(tempCount == 2 && it != correctAnswer){
-               ui->btnAnswer3->setText(it.value());
-           }
+    std::uniform_int_distribution<> distributionForIndex(0, randomKey.size()-1);
 
-       }
-       break;
-   case 3:
-       ui->btnAnswer3->setText(correctAnswer.value());
+    int prevIndex = -1;
 
-       for(auto it = data.constBegin(); it != data.constEnd();++it){
-           if(tempCount == 1 && it != correctAnswer){
-               ui->btnAnswer2->setText(it.value());
-               tempCount++;
-           }else if(tempCount == 2 && it != correctAnswer){
-               ui->btnAnswer1->setText(it.value());
-           }
+    QVector<int> indexAlreadyWas;
+    for(const auto& button: buttons){
+        int Index = distributionForIndex(gen);
+        if(button != buttons[correctButton]){
+            if(Index != prevIndex && correctAnswer.second != data[randomKey[Index]]){
+                 button->setText(data[randomKey[Index]]);
+            }else{
+                 Index = distributionForIndex(gen);
+                 button->setText(data[randomKey[Index]]);
+            }
+        }
+    }
+    }else{
+        CheckScore();
+        close();
+    }
 
-       }
-       break;
-   default:
-       break;
-   }
+}
 
+void TestForm::ChangeButtonColor(QPushButton *button)
+{
+
+     button->setStyleSheet("background-color: red; color: white; border: 2px solid #1D0F0F; border-radius: 8px; padding: 3;");
+
+     QTimer *timer = new QTimer(this);
+     connect(timer, &QTimer::timeout, this, [=]() {
+           button->setStyleSheet("background-color: #7B586B; color: white; border: 2px solid #1D0F0F; border-radius: 8px; padding: 3;");
+           timer->deleteLater();
+       });
+
+     timer->start(400);
+}
+
+void TestForm::CheckScore()
+{
+    QMessageBox msgBox;
+
+    if(score == 10 || score == amountOfElements){
+      QString strScore = QString("Congratulations! You have scored %1 points!").arg(score);
+      QMessageBox::information(this, "Congratulations!", strScore);
+    }else if(score >= 10/2 || score >= amountOfElements/2){
+      QString strScore = QString("Not bad! You have scored %1 points!").arg(score);
+      QMessageBox::information(this, "Not bad!", strScore);
+    }else{
+      QString strScore = QString("Badly! You have scored %1 points!").arg(score);
+      QMessageBox::information(this, "Badly!", strScore);
+    }
 }
 
 void TestForm::on_btnAnswer1_clicked()
 {
     if(isAnswerCorrect(ui->btnAnswer1->text())){
         StartTest();
+    }else{
+        ChangeButtonColor(ui->btnAnswer1);
     }
 }
 
@@ -109,6 +131,8 @@ void TestForm::on_btnAnswer2_clicked()
 {
     if(isAnswerCorrect(ui->btnAnswer2->text())){
         StartTest();
+    }else{
+        ChangeButtonColor(ui->btnAnswer2);
     }
 }
 
@@ -117,6 +141,8 @@ void TestForm::on_btnAnswer3_clicked()
 {
     if(isAnswerCorrect(ui->btnAnswer3->text())){
         StartTest();
+    }else{
+        ChangeButtonColor(ui->btnAnswer3);
     }
 }
 

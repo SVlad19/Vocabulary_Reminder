@@ -34,6 +34,7 @@ void MainWindow::on_btnAdd_clicked()
 
         ui->leWord->clear();
         ui->leTranscription->clear();
+        dataBase->fillData();
     }
 
 }
@@ -48,12 +49,15 @@ void MainWindow::on_tvDataBase_clicked(const QModelIndex &index)
 void MainWindow::on_btnRemove_clicked()
 {
     model->removeRow(index);
+    dataBase->fillData();
 }
 
 
 void MainWindow::on_btnTest_clicked()
 {
+
     testForm = std::make_unique<TestForm>(dataBase->GetData());
+
 
     testForm->show();
 }

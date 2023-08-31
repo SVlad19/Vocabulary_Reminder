@@ -13,6 +13,13 @@
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">QMainWindow {
+	background-color: #7B7C81;
+}
+
+</string>
+  </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="1" column="0">
     <widget class="QPushButton" name="btnAnswer1">
@@ -22,6 +29,18 @@
        <pointsize>15</pointsize>
        <bold>true</bold>
       </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+   background-color: #7B586B; 
+   color: white; 
+   border: 2px solid #1D0F0F; 
+   border-radius: 8px; 
+   padding: 3; }
+
+QPushButton:pressed { 
+	background-color: #D4DBE2;
+ }</string>
      </property>
      <property name="text">
       <string>Answer1</string>
@@ -37,6 +56,18 @@
        <bold>true</bold>
       </font>
      </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+   background-color: #7B586B; 
+   color: white; 
+   border: 2px solid #1D0F0F; 
+   border-radius: 8px; 
+   padding: 3; }
+
+QPushButton:pressed { 
+	background-color: #D4DBE2;
+ }</string>
+     </property>
      <property name="text">
       <string>Answer2</string>
      </property>
@@ -51,6 +82,18 @@
        <bold>true</bold>
       </font>
      </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+   background-color: #7B586B; 
+   color: white; 
+   border: 2px solid #1D0F0F; 
+   border-radius: 8px; 
+   padding: 3; }
+
+QPushButton:pressed { 
+	background-color: #D4DBE2;
+ }</string>
+     </property>
      <property name="text">
       <string>Answer3</string>
      </property>
@@ -64,6 +107,15 @@
        <pointsize>40</pointsize>
        <bold>true</bold>
       </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel {
+    color: #333333; /* Цвет текста */
+    border: 1px solid #CCCCCC; /* Граница */
+    border-radius: 5px; /* Скругление углов */
+    padding: 5px; /* Отступы вокруг текста */
+    text-align: center; /* Выравнивание текста по центру */
+}</string>
      </property>
      <property name="text">
       <string>Example</string>

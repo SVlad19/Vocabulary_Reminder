@@ -1,7 +1,6 @@
 #ifndef DATABASE_H
 #define DATABASE_H
 
-
 #include <QObject>
 #include <QSqlDatabase>
 #include <QSqlQuery>
@@ -13,11 +12,16 @@ class DataBase : public QObject
 public:
     DataBase();
     QSqlTableModel* GetModel()const;
-    QMap<QString,QString> GetData();
+    const QHash<QString,QString>& GetData();
+    void fillData();
+
 private:
     QSqlDatabase database;
     std::unique_ptr<QSqlQuery> query;
     std::unique_ptr<QSqlTableModel> model;
+    QHash<QString,QString> data;
+
+
 };
 
 #endif // DATABASE_H

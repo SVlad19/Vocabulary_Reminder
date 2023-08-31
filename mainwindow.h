@@ -35,6 +35,6 @@ private:
     size_t index;
     QSqlTableModel* model;
     QMap<QString,QString> data;
-     std::unique_ptr<TestForm> testForm;
+    std::unique_ptr<TestForm> testForm;
 };
 #endif // MAINWINDOW_H

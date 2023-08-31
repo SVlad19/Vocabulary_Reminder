@@ -12,7 +12,7 @@ class TestForm : public QDialog
     Q_OBJECT
 
 public:
-    explicit TestForm(QMap<QString,QString> data,QWidget *parent = nullptr);
+    explicit TestForm(const QHash<QString,QString>& data,QWidget *parent = nullptr);
     ~TestForm();
 
 private slots:
@@ -24,11 +24,18 @@ private slots:
 
 private:
     Ui::TestForm *ui;
-    QMap<QString,QString> data;
-    QMap<QString,QString>::ConstIterator correctAnswer;
+    QHash<QString,QString> data;
+    int amountOfElements;
+    QPair<QString,QString> correctAnswer;
+    QVector<QString> randomKey;
+    mutable int score;
+
 
     bool isAnswerCorrect(const QString& answer)const;
     void StartTest();
+    void ChangeButtonColor(QPushButton* btn);
+    void CheckScore();
 };
+
 
 #endif // TESTFORM_H
